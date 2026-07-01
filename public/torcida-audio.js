@@ -1,6 +1,24 @@
 (() => {
-  let ctx, source, gain, lfo, playing = false;
   const btn = document.getElementById('soundBtn');
+  let htmlAudio = null;
+  let usingFile = false;
+  let ctx, source, gain, lfo, playing = false;
+
+  function setBtn(text) {
+    if (btn) btn.textContent = text;
+  }
+
+  async function tryAudioFile() {
+    if (!htmlAudio) {
+      htmlAudio = new Audio('/public/torcida.mp3');
+      htmlAudio.loop = true;
+      htmlAudio.volume = 0.28;
+    }
+    await htmlAudio.play();
+    usingFile = true;
+    playing = true;
+    setBtn('⏸ Pausar torcida');
+  }
 
   function bufferNoise(ctx, seconds = 2.2) {
     const buffer = ctx.createBuffer(1, ctx.sampleRate * seconds, ctx.sampleRate);
@@ -14,8 +32,7 @@
     return buffer;
   }
 
-  async function start() {
-    if (playing) return;
+  async function startGeneratedCrowd() {
     ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
     if (ctx.state === 'suspended') await ctx.resume();
 
@@ -44,27 +61,41 @@
 
     source.start();
     lfo.start();
+    usingFile = false;
     playing = true;
-    if (btn) btn.textContent = '⏸ Pausar torcida';
+    setBtn('⏸ Pausar torcida');
+  }
+
+  async function start() {
+    if (playing) return;
+    try {
+      await tryAudioFile();
+    } catch (e) {
+      await startGeneratedCrowd();
+    }
   }
 
   function stop() {
     if (!playing) return;
-    try { source && source.stop(); } catch(e) {}
-    try { lfo && lfo.stop(); } catch(e) {}
-    try { gain && gain.disconnect(); } catch(e) {}
-    source = null; lfo = null; gain = null;
+    if (usingFile && htmlAudio) {
+      htmlAudio.pause();
+    } else {
+      try { source && source.stop(); } catch(e) {}
+      try { lfo && lfo.stop(); } catch(e) {}
+      try { gain && gain.disconnect(); } catch(e) {}
+      source = null; lfo = null; gain = null;
+    }
     playing = false;
-    if (btn) btn.textContent = '🔊 Ativar torcida';
+    setBtn('🔊 Ativar torcida');
   }
 
   window.toggleTorcida = async () => {
     if (playing) stop();
-    else await start();
+    else await start().catch(() => setBtn('🔊 Ativar torcida'));
   };
 
   window.addEventListener('load', () => {
-    start().catch(() => { if (btn) btn.textContent = '🔊 Ativar torcida'; });
+    start().catch(() => setBtn('🔊 Ativar torcida'));
   });
 
   document.addEventListener('click', () => {
