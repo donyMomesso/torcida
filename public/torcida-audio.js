@@ -10,7 +10,7 @@
 
   async function tryAudioFile() {
     if (!htmlAudio) {
-      htmlAudio = new Audio('/public/torcida.mp3');
+      htmlAudio = new Audio('/public/torcida-audio.mp3');
       htmlAudio.loop = true;
       htmlAudio.volume = 0.28;
     }
