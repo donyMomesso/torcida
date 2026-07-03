@@ -6,7 +6,6 @@
 <meta name="theme-color" content="#080808">
 <title>Torcida Pede Pappi | Pappi Pizza</title>
 <meta name="description" content="Vai ver o jogo com a galera? Peça os combos do jogo da Pappi Pizza Campinas. Entrega rápida, pizza quentinha antes do apito final.">
-<!-- Open Graph -->
 <meta property="og:title" content="Torcida Pede Pappi | Pappi Pizza Campinas">
 <meta property="og:description" content="Combos especiais para o jogo. Pizza na mesa antes do gol.">
 <meta property="og:type" content="website">
@@ -34,11 +33,16 @@ body{font-family:Inter,system-ui,Arial,sans-serif;background:#050505;color:#fff;
 a{text-decoration:none;color:inherit}
 img{display:block;max-width:100%}
 
-/* ── Background ── */
-.bg{position:fixed;inset:0;z-index:-2;background:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.94)),url('/assets/bg-copa-futebol.svg') center/cover no-repeat}
+/* ── Background: foto real do estádio ── */
+.bg{
+  position:fixed;inset:0;z-index:-2;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.75) 60%,rgba(0,0,0,.96) 100%),
+    url('/assets/bg-estadio-copa.jpg') center/cover no-repeat;
+}
 
 /* ── Shell ── */
-.shell{width:min(430px,100%);min-height:100vh;margin:0 auto;background:rgba(5,5,5,.78);box-shadow:0 0 100px rgba(0,0,0,.9);padding-bottom:100px}
+.shell{width:min(430px,100%);min-height:100vh;margin:0 auto;background:rgba(5,5,5,.72);box-shadow:0 0 100px rgba(0,0,0,.9);padding-bottom:100px}
 
 /* ── Urgency bar ── */
 .urgency-bar{
@@ -50,7 +54,7 @@ img{display:block;max-width:100%}
   display:flex;align-items:center;justify-content:center;gap:8px;
 }
 @keyframes barPulse{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.urgency-bar .dot{width:7px;height:7px;border-radius:50%;background:#fff;animation:blink 1s step-start infinite}
+.urgency-bar .dot{width:7px;height:7px;border-radius:50%;background:#fff;animation:blink 1s step-start infinite;flex-shrink:0}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
 /* ── Top bar ── */
@@ -63,6 +67,23 @@ img{display:block;max-width:100%}
 .brand b{font-size:18px;line-height:1;display:block}
 .brand span{display:block;font-size:11px;color:#dbe7df;font-weight:800;margin-top:4px}
 .head-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+
+/* ── Horário de funcionamento ── */
+.hours-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:9px 14px;
+  background:rgba(255,255,255,.04);
+  border-bottom:1px solid var(--line);
+  font-size:11px;
+}
+.hours-status{display:flex;align-items:center;gap:6px;font-weight:900;text-transform:uppercase;letter-spacing:.5px}
+.hours-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.hours-dot.open{background:#15b653;box-shadow:0 0 6px #15b653;animation:glowPulse 1.5s ease-in-out infinite}
+.hours-dot.closed{background:#e8192c}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 4px #15b653}50%{box-shadow:0 0 10px #15b653,0 0 18px rgba(21,182,83,.4)}}
+.hours-open-text{color:#15b653}
+.hours-closed-text{color:#e8192c}
+.hours-schedule{color:#9db0a4;font-size:10px;text-align:right;line-height:1.4}
 
 /* ── Countdown timer ── */
 .timer-wrap{background:rgba(255,210,31,.08);border:1px solid rgba(255,210,31,.25);border-radius:var(--radius-sm);padding:10px 14px;margin:10px 12px 0;display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -117,8 +138,9 @@ h1 .y{color:var(--y)}
 .stars{color:var(--y);font-size:11px;letter-spacing:1px}
 
 /* ── Photo ── */
-.photo-wrap{position:relative}
-.photo{width:100%;aspect-ratio:4/3;object-fit:cover}
+.photo-wrap{position:relative;overflow:hidden}
+.photo{width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .4s ease}
+.combo:hover .photo{transform:scale(1.04)}
 .photo-label{position:absolute;left:12px;top:12px;background:var(--y);color:#111;border-radius:999px;padding:8px 11px;font-size:11px;font-weight:1000;text-transform:uppercase;box-shadow:0 10px 24px rgba(0,0,0,.35)}
 .photo-badge-hot{position:absolute;right:12px;top:12px;background:var(--r);color:#fff;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:1000;text-transform:uppercase;letter-spacing:.5px;animation:badgePop .6s ease}
 @keyframes badgePop{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
@@ -172,6 +194,17 @@ h1 .y{color:var(--y)}
 .menu-card strong{display:block;font-size:24px;line-height:1.1}
 .menu-card p{font-size:14px;line-height:1.4;color:#dce6df;margin:8px 0 13px}
 
+/* ── Fechado overlay ── */
+.closed-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+.closed-overlay.show{display:flex}
+.closed-icon{font-size:64px;margin-bottom:16px}
+.closed-title{font-size:32px;font-weight:1000;letter-spacing:-1px;text-transform:uppercase;margin-bottom:8px}
+.closed-sub{font-size:16px;color:#dce6df;line-height:1.5;max-width:320px;margin:0 auto 20px}
+.closed-hours{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 20px;margin-bottom:20px;font-size:14px;line-height:1.8;color:#dce6df}
+.closed-hours strong{color:#fff;font-weight:900}
+.closed-hours .y{color:var(--y)}
+.closed-wa{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#25d366,#12964a);color:#fff;border-radius:14px;padding:14px 24px;font-size:14px;font-weight:1000;text-transform:uppercase;box-shadow:0 8px 24px rgba(21,182,83,.35)}
+
 /* ── Sticky bar ── */
 .sticky{position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:30;width:min(430px,100%);background:rgba(8,8,8,.97);border-top:1px solid var(--line);backdrop-filter:blur(16px);padding:8px 12px calc(8px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px}
 .sticky small{display:block;font-size:10px;color:#bccbc2;text-transform:uppercase;font-weight:900;letter-spacing:.8px}
@@ -193,6 +226,21 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
 </style>
 </head>
 <body>
+
+<!-- Overlay de fechado (controlado por JS) -->
+<div class="closed-overlay" id="closedOverlay">
+  <div class="closed-icon">🍕</div>
+  <div class="closed-title">Estamos <span style="color:var(--r)">fechados</span> agora</div>
+  <p class="closed-sub">Mas já voltamos! Confira nosso horário de funcionamento:</p>
+  <div class="closed-hours">
+    <strong>Dom – Qui</strong> &nbsp;·&nbsp; <span class="y">18h às 22h</span><br>
+    <strong>Sex – Sáb</strong> &nbsp;·&nbsp; <span class="y">18h às 23h</span>
+  </div>
+  <a class="closed-wa" href="https://wa.me/5519983193999?text=Oi%2C%20quero%20saber%20o%20hor%C3%A1rio%20da%20Pappi%20Pizza" target="_blank">
+    💬 Falar pelo WhatsApp
+  </a>
+</div>
+
 <div class="bg"></div>
 <div class="shell">
 
@@ -217,6 +265,17 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
       <a class="mini wa" href="https://wa.me/5519983193999?text=Oi%2C%20quero%20pedir%20um%20combo%20do%20jogo%20da%20Pappi%20Pizza" onclick="fbq('track','Contact');" target="_blank">💬 WhatsApp</a>
     </div>
   </header>
+
+  <!-- Horário de funcionamento -->
+  <div class="hours-bar" id="hoursBar">
+    <div class="hours-status">
+      <span class="hours-dot open" id="hoursDot"></span>
+      <span id="hoursStatusText" class="hours-open-text">Aberto agora</span>
+    </div>
+    <div class="hours-schedule">
+      Dom–Qui: 18h–22h &nbsp;|&nbsp; Sex–Sáb: 18h–23h
+    </div>
+  </div>
 
   <!-- Countdown timer -->
   <div class="timer-wrap">
@@ -269,7 +328,7 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
     <section class="section">
       <div class="card">
         <div class="photo-wrap">
-          <img class="photo" src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=900&q=85" alt="Mesa com pizza para casa cheia">
+          <img class="photo" src="/assets/pizza-combo-grande.jpg" alt="2 pizzas família para casa cheia">
           <div class="photo-label">🏠 Casa cheia • 2 pizzas</div>
           <div class="photo-badge-hot">🔥 Mais pedido</div>
         </div>
@@ -303,7 +362,7 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
         <!-- Combo 1 -->
         <article class="combo">
           <div class="photo-wrap">
-            <img class="photo" src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=900&q=85" alt="Duas pizzas para casa cheia">
+            <img class="photo" src="/assets/pizza-combo-grande.jpg" alt="2 pizzas família para casa cheia">
             <div class="photo-label">2 pizzas família</div>
             <div class="photo-badge-hot">🔥 Mais pedido</div>
           </div>
@@ -320,7 +379,7 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
         <!-- Combo 2 -->
         <article class="combo">
           <div class="photo-wrap">
-            <img class="photo" src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=85" alt="Duas pizzas para turma reunida">
+            <img class="photo" src="/assets/pizza-combo-medio.jpg" alt="2 pizzas para turma reunida">
             <div class="photo-label">2 pizzas + refri</div>
           </div>
           <div class="body">
@@ -335,7 +394,7 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
         <!-- Combo 3 -->
         <article class="combo">
           <div class="photo-wrap">
-            <img class="photo" src="https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&w=900&q=85" alt="Uma pizza família para jogo em família">
+            <img class="photo" src="/assets/pizza-combo-familia.jpg" alt="1 pizza família para jogo em família">
             <div class="photo-label">1 pizza família</div>
           </div>
           <div class="body">
@@ -398,19 +457,67 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
 <!-- Audio script -->
 <script src="/public/torcida-audio.js"></script>
 
-<!-- Countdown timer script -->
 <script>
+/* ── Horário de funcionamento ──
+   Dom(0)–Qui(4): 18h–22h
+   Sex(5)–Sáb(6): 18h–23h
+   Horário de Brasília (UTC-3)
+*/
 (function(){
-  // Pega ou cria o tempo de expiração no sessionStorage (2h a partir do primeiro acesso)
-  var key = 'pappi_timer_end';
-  var end = parseInt(sessionStorage.getItem(key) || '0', 10);
-  if (!end || end < Date.now()) {
-    end = Date.now() + 2 * 60 * 60 * 1000; // 2 horas
-    sessionStorage.setItem(key, end);
+  function isOpen(){
+    // Obtém hora atual em Brasília (UTC-3)
+    var now = new Date();
+    var utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    var brt = new Date(utc - 3 * 3600000);
+    var day = brt.getDay();   // 0=Dom, 1=Seg, ..., 6=Sáb
+    var h   = brt.getHours();
+    var m   = brt.getMinutes();
+    var mins = h * 60 + m;
+
+    var open  = 18 * 60;      // 18:00
+    var closeDomQui = 22 * 60; // 22:00
+    var closeSexSab = 23 * 60; // 23:00
+
+    if(day >= 0 && day <= 4){ // Dom a Qui
+      return mins >= open && mins < closeDomQui;
+    } else { // Sex e Sáb
+      return mins >= open && mins < closeSexSab;
+    }
   }
 
-  function pad(n){ return String(n).padStart(2,'0'); }
+  var open = isOpen();
 
+  // Atualiza barra de horário no header
+  var dot  = document.getElementById('hoursDot');
+  var text = document.getElementById('hoursStatusText');
+  if(!open){
+    dot.classList.remove('open');
+    dot.classList.add('closed');
+    text.className = 'hours-closed-text';
+    text.textContent = 'Fechado agora';
+  }
+
+  // Exibe overlay de fechado
+  if(!open){
+    document.getElementById('closedOverlay').classList.add('show');
+  }
+
+  // Urgency bar: só mostra se aberto
+  var urgencyBar = document.querySelector('.urgency-bar');
+  if(urgencyBar && !open){
+    urgencyBar.style.display = 'none';
+  }
+})();
+
+/* ── Countdown timer ── */
+(function(){
+  var key = 'pappi_timer_end';
+  var end = parseInt(sessionStorage.getItem(key) || '0', 10);
+  if(!end || end < Date.now()){
+    end = Date.now() + 2 * 60 * 60 * 1000;
+    sessionStorage.setItem(key, end);
+  }
+  function pad(n){ return String(n).padStart(2,'0'); }
   function tick(){
     var diff = Math.max(0, end - Date.now());
     var h = Math.floor(diff / 3600000);
@@ -419,9 +526,8 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
     document.getElementById('t-h').textContent = pad(h);
     document.getElementById('t-m').textContent = pad(m);
     document.getElementById('t-s').textContent = pad(s);
-    if (diff > 0) setTimeout(tick, 1000);
-    else {
-      // Reinicia o timer quando chega a zero
+    if(diff > 0) setTimeout(tick, 1000);
+    else{
       end = Date.now() + 2 * 60 * 60 * 1000;
       sessionStorage.setItem(key, end);
     }
