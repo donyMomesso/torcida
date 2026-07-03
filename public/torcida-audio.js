@@ -12,37 +12,71 @@
     audio = new Audio('/public/torcida-audio.mp3');
     audio.loop = true;
     audio.volume = 0.30;
+    // Quando o áudio parar por qualquer motivo, tenta retomar
+    audio.addEventListener('pause', () => {
+      if (playing) {
+        setTimeout(() => { try { audio.play(); } catch(e){} }, 300);
+      }
+    });
   }
 
-  async function play() {
+  async function startAudio() {
     createAudio();
     try {
       await audio.play();
       playing = true;
       setBtn(false);
+      sessionStorage.setItem('pappi_audio', '1');
     } catch (e) {
-      // Autoplay bloqueado pelo navegador — aguarda primeiro clique do usuário
       playing = false;
       setBtn(true);
     }
   }
 
-  function pause() {
-    if (audio) audio.pause();
+  function pauseAudio() {
     playing = false;
+    sessionStorage.setItem('pappi_audio', '0');
+    if (audio) audio.pause();
     setBtn(true);
   }
 
-  // Botão alterna pausar / retomar
+  // Botão: só pausa / retoma
   window.toggleTorcida = () => {
-    if (playing) pause();
-    else play();
+    if (playing) pauseAudio();
+    else startAudio();
   };
 
-  // Tenta autoplay assim que o DOM estiver pronto
-  window.addEventListener('DOMContentLoaded', () => play());
+  // Tenta autoplay imediato
+  function tryAutoplay() {
+    // Se o usuário pausou manualmente, respeita a escolha
+    if (sessionStorage.getItem('pappi_audio') === '0') {
+      setBtn(true);
+      return;
+    }
+    startAudio();
+  }
 
-  // Fallback: se o autoplay for bloqueado, toca no primeiro clique/toque do usuário
-  document.addEventListener('click', () => { if (!playing) play(); }, { once: true });
-  document.addEventListener('touchstart', () => { if (!playing) play(); }, { once: true });
+  // 1ª tentativa: ao carregar o DOM
+  document.addEventListener('DOMContentLoaded', tryAutoplay);
+
+  // 2ª tentativa: ao carregar tudo (fallback)
+  window.addEventListener('load', () => { if (!playing) tryAutoplay(); });
+
+  // 3ª tentativa: no primeiro gesto do usuário (obrigatório em alguns browsers)
+  function onFirstGesture() {
+    if (!playing && sessionStorage.getItem('pappi_audio') !== '0') {
+      startAudio();
+    }
+  }
+  document.addEventListener('click',      onFirstGesture, { once: true });
+  document.addEventListener('touchstart', onFirstGesture, { once: true });
+  document.addEventListener('keydown',    onFirstGesture, { once: true });
+  document.addEventListener('scroll',     onFirstGesture, { once: true });
+
+  // 4ª tentativa: visibilidade — retoma se a aba voltar ao foco
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !playing && sessionStorage.getItem('pappi_audio') !== '0') {
+      startAudio();
+    }
+  });
 })();
