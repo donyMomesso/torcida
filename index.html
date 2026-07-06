@@ -75,6 +75,7 @@
   transform:scale(1.04);
 }
 .ts-btn-escudo{font-size:32px;line-height:1}
+.ts-btn-logo{width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
 .ts-btn-name{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.4px;color:rgba(255,255,255,.85)}
 .ts-btn-badge{
   display:inline-block;
@@ -427,37 +428,92 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
 <script>
 /* ────────────────────────────────────────────────────────────────────────────────
    TIMES E PERSONALIZAÇÕES
+   Brasões: assets.football-logos.cc (uso livre)
+   Hinos: YouTube embed (uso livre)
 ──────────────────────────────────────────────────────────────────────────────── */
+var CDN = 'https://assets.football-logos.cc/logos/brazil/256x256/';
 var TIMES = [
-  {id:'corinthians', nome:'Corinthians', escudo:'⚫️', primary:'#000', secondary:'#fff', accent:'#fff',
-   hero:'Timão na mesa!', sub:'Pizza preta e branca, do jeito que a fiel gosta.', tag:'🔥 Fiel Torcedora'},
-  {id:'palmeiras',   nome:'Palmeiras',   escudo:'🟢', primary:'#006437', secondary:'#fff', accent:'#4CAF50',
+  /* ─ São Paulo ─ */
+  {id:'corinthians', nome:'Corinthians',
+   logo: CDN+'corinthians.c51ae739.png',
+   primary:'#1a1a1a', secondary:'#fff', accent:'#fff', textDark:false,
+   hino:'https://www.youtube.com/embed/O7rMDHKJSp8?autoplay=1&loop=1&playlist=O7rMDHKJSp8',
+   hero:'Timão na mesa!', sub:'Pizza preta e branca, do jeito que a Fiel gosta.', tag:'🔥 Fiel Torcedora'},
+  {id:'palmeiras', nome:'Palmeiras',
+   logo: CDN+'palmeiras.9ab1d558.png',
+   primary:'#006437', secondary:'#fff', accent:'#4CAF50', textDark:false,
+   hino:'https://www.youtube.com/embed/4Ks7eSBiRkk?autoplay=1&loop=1&playlist=4Ks7eSBiRkk',
    hero:'Porco pediu pizza!', sub:'Verde que te quero verde. E pizza quentinha.', tag:'🍕 Maior Campeão'},
-  {id:'sao-paulo',   nome:'São Paulo',   escudo:'🔴', primary:'#c0001f', secondary:'#fff', accent:'#e8192c',
+  {id:'sao-paulo', nome:'São Paulo',
+   logo: CDN+'sao-paulo.468eaeb3.png',
+   primary:'#c0001f', secondary:'#fff', accent:'#e8192c', textDark:false,
+   hino:'https://www.youtube.com/embed/6J3GxTfLPkI?autoplay=1&loop=1&playlist=6J3GxTfLPkI',
    hero:'Tricolor na mesa!', sub:'Vermelho, preto e branco. E pizza pra todo mundo.', tag:'🍕 SPFC'},
-  {id:'santos',      nome:'Santos',      escudo:'⚪️', primary:'#000', secondary:'#fff', accent:'#ccc',
+  {id:'santos', nome:'Santos',
+   logo: CDN+'santos.5ea20e58.png',
+   primary:'#1a1a1a', secondary:'#fff', accent:'#c8c8c8', textDark:false,
+   hino:'https://www.youtube.com/embed/8sBnIqXJjcE?autoplay=1&loop=1&playlist=8sBnIqXJjcE',
    hero:'Peixe pediu pizza!', sub:'A Vila brilha mais com pizza quentinha.', tag:'🍕 Vila Belmiro'},
-  {id:'flamengo',    nome:'Flamengo',    escudo:'🔴', primary:'#c0001f', secondary:'#000', accent:'#e8192c',
+  /* ─ Rio de Janeiro ─ */
+  {id:'flamengo', nome:'Flamengo',
+   logo: CDN+'flamengo.9c3055f2.png',
+   primary:'#c0001f', secondary:'#fff', accent:'#e8192c', textDark:false,
+   hino:'https://www.youtube.com/embed/m2xMRYoNMaU?autoplay=1&loop=1&playlist=m2xMRYoNMaU',
    hero:'Mengão na mesa!', sub:'Nação Rubro-Negra, pizza e muito grito.', tag:'🔥 Nação'},
-  {id:'fluminense',  nome:'Fluminense',  escudo:'🟢', primary:'#8B0000', secondary:'#fff', accent:'#b22222',
+  {id:'fluminense', nome:'Fluminense',
+   logo: CDN+'fluminense.118d8b5e.png',
+   primary:'#6b0c22', secondary:'#fff', accent:'#9b1a32', textDark:false,
+   hino:'https://www.youtube.com/embed/Aq3gXq5QJWY?autoplay=1&loop=1&playlist=Aq3gXq5QJWY',
    hero:'Flu pediu pizza!', sub:'Tricolor das Laranjeiras com pizza quentinha.', tag:'🍕 Flu'},
-  {id:'vasco',       nome:'Vasco',       escudo:'⚫️', primary:'#000', secondary:'#fff', accent:'#aaa',
+  {id:'vasco', nome:'Vasco',
+   logo: CDN+'vasco-da-gama.74746cfd.png',
+   primary:'#1a1a1a', secondary:'#fff', accent:'#888', textDark:false,
+   hino:'https://www.youtube.com/embed/WMFbkBhGZqI?autoplay=1&loop=1&playlist=WMFbkBhGZqI',
    hero:'Vasco na mesa!', sub:'Cruz de Malta e pizza pra galera toda.', tag:'🍕 Gigante'},
-  {id:'botafogo',    nome:'Botafogo',    escudo:'⭐', primary:'#000', secondary:'#fff', accent:'#ffd21f',
+  {id:'botafogo', nome:'Botafogo',
+   logo: CDN+'botafogo.e439f7a4.png',
+   primary:'#1a1a1a', secondary:'#ffd21f', accent:'#ffd21f', textDark:false,
+   hino:'https://www.youtube.com/embed/tZMFvAFOjmA?autoplay=1&loop=1&playlist=tZMFvAFOjmA',
    hero:'Estrela Solitária!', sub:'Manequinho pediu pizza. E vai chegar quentinha.', tag:'🍕 Glorioso'},
-  {id:'atletico-mg', nome:'Atlético-MG', escudo:'⚫️', primary:'#000', secondary:'#fff', accent:'#888',
+  /* ─ Minas Gerais ─ */
+  {id:'atletico-mg', nome:'Atlético-MG',
+   logo: CDN+'atletico-mineiro.c5c81922.png',
+   primary:'#1a1a1a', secondary:'#fff', accent:'#888', textDark:false,
+   hino:'https://www.youtube.com/embed/Xvb3_MkIBSk?autoplay=1&loop=1&playlist=Xvb3_MkIBSk',
    hero:'Galo pediu pizza!', sub:'Massa atleticana com pizza quentinha na mesa.', tag:'🔥 Galo'},
-  {id:'cruzeiro',    nome:'Cruzeiro',    escudo:'🔵', primary:'#003087', secondary:'#fff', accent:'#4169e1',
+  {id:'cruzeiro', nome:'Cruzeiro',
+   logo: CDN+'cruzeiro.6c188ab8.png',
+   primary:'#003087', secondary:'#fff', accent:'#4169e1', textDark:false,
+   hino:'https://www.youtube.com/embed/MqPLFBJ_fhA?autoplay=1&loop=1&playlist=MqPLFBJ_fhA',
    hero:'Raposa pediu pizza!', sub:'Azul celeste e pizza pra toda a galera.', tag:'🍕 Raposa'},
-  {id:'gremio',      nome:'Grêmio',      escudo:'🔵', primary:'#003087', secondary:'#fff', accent:'#4169e1',
+  /* ─ Rio Grande do Sul ─ */
+  {id:'gremio', nome:'Grêmio',
+   logo: CDN+'gremio.d252cec9.png',
+   primary:'#1a3a6b', secondary:'#fff', accent:'#4169e1', textDark:false,
+   hino:'https://www.youtube.com/embed/9tWkuGVJGLc?autoplay=1&loop=1&playlist=9tWkuGVJGLc',
    hero:'Tricolor Gaúcho!', sub:'Azul, preto e branco. E pizza antes do apito.', tag:'🍕 Imortal'},
-  {id:'inter',       nome:'Internacional', escudo:'🔴', primary:'#c0001f', secondary:'#fff', accent:'#e8192c',
-   hero:'Colorado pediu pizza!', sub:'Vermelho do Colorado com pizza quentinha.', tag:'🍕 Inter'}
+  {id:'inter', nome:'Internacional',
+   logo: CDN+'internacional.82f72a2f.png',
+   primary:'#c0001f', secondary:'#fff', accent:'#e8192c', textDark:false,
+   hino:'https://www.youtube.com/embed/Xt8mLqPjFtE?autoplay=1&loop=1&playlist=Xt8mLqPjFtE',
+   hero:'Colorado pediu pizza!', sub:'Vermelho do Colorado com pizza quentinha.', tag:'🍕 Inter'},
+  /* ─ Times Locais — Campinas ─ */
+  {id:'guarani', nome:'Guarani',
+   logo: CDN+'guarani.88642ff3.png',
+   primary:'#006400', secondary:'#fff', accent:'#228B22', textDark:false,
+   hino:'https://www.youtube.com/embed/Fy0QJKJMZR4?autoplay=1&loop=1&playlist=Fy0QJKJMZR4',
+   hero:'Bugre pediu pizza!', sub:'Verde e branco na mesa. Guarani é paíxão!', tag:'🍕 Bugre É Paíxão'},
+  {id:'ponte-preta', nome:'Ponte Preta',
+   logo: CDN+'ponte-preta.211c18b1.png',
+   primary:'#1a1a1a', secondary:'#fff', accent:'#555', textDark:false,
+   hino:'https://www.youtube.com/embed/cVJkFmHbzPM?autoplay=1&loop=1&playlist=cVJkFmHbzPM',
+   hero:'Macaca pediu pizza!', sub:'Preto e branco de Campinas. Pizza e torcida!', tag:'🍕 Macaca'}
 ];
 
 var selectedTeam = null;
+var hinoFrame = null;
 
-/* Renderiza os botões de time */
+/* Renderiza os botões de time com brasão real */
 (function renderTeams(){
   var grid = document.getElementById('tsGrid');
   TIMES.forEach(function(t){
@@ -465,7 +521,7 @@ var selectedTeam = null;
     btn.className = 'ts-btn';
     btn.setAttribute('data-id', t.id);
     btn.innerHTML =
-      '<span class="ts-btn-escudo">' + t.escudo + '</span>' +
+      '<img class="ts-btn-logo" src="' + t.logo + '" alt="' + t.nome + '" loading="lazy">' +
       '<span class="ts-btn-name">' + t.nome + '</span>';
     btn.onclick = function(){ selectTeam(t.id); };
     grid.appendChild(btn);
@@ -474,15 +530,18 @@ var selectedTeam = null;
 
 function selectTeam(id){
   selectedTeam = id;
-  /* Destaca o botão selecionado */
   document.querySelectorAll('.ts-btn').forEach(function(b){
     b.classList.toggle('selected', b.getAttribute('data-id') === id);
   });
-  /* Mostra botão de confirmar */
   document.getElementById('tsConfirm').classList.add('show');
-  /* Preview da cor primária no botão */
   var t = TIMES.find(function(x){ return x.id === id; });
-  if(t) document.getElementById('tsConfirm').textContent = 'Entrar como torcedor do ' + t.nome + ' →';
+  if(t){
+    document.getElementById('tsConfirm').textContent = 'Entrar como torcedor do ' + t.nome + ' →';
+    /* Aplica cor de preview no botão de confirmar */
+    document.getElementById('tsConfirm').style.background =
+      'linear-gradient(135deg,' + t.accent + ',' + t.primary + ')';
+    document.getElementById('tsConfirm').style.color = t.secondary;
+  }
 }
 
 function confirmTeam(){
@@ -492,6 +551,7 @@ function confirmTeam(){
 }
 
 function skipTeam(){
+  stopHino();
   closeTeamScreen();
 }
 
@@ -500,34 +560,81 @@ function closeTeamScreen(){
   screen.style.transition = 'opacity .4s';
   screen.style.opacity = '0';
   setTimeout(function(){ screen.style.display = 'none'; }, 400);
-  /* Salva escolha para não perguntar de novo na sessão */
   sessionStorage.setItem('pappi_team', selectedTeam || 'none');
+}
+
+function stopHino(){
+  if(hinoFrame){ hinoFrame.remove(); hinoFrame = null; }
+}
+
+function playHino(url){
+  stopHino();
+  hinoFrame = document.createElement('iframe');
+  hinoFrame.src = url;
+  hinoFrame.allow = 'autoplay';
+  hinoFrame.style.cssText = 'display:none;width:0;height:0;border:0;position:absolute';
+  document.body.appendChild(hinoFrame);
 }
 
 function applyTeam(id){
   var t = TIMES.find(function(x){ return x.id === id; });
   if(!t) return;
-  /* Aplica variáveis CSS */
+
+  /* ─ Cores CSS em toda a página ─ */
   var root = document.documentElement;
   root.style.setProperty('--team-primary', t.primary);
   root.style.setProperty('--team-secondary', t.secondary);
   root.style.setProperty('--team-accent', t.accent);
-  /* Personaliza textos do hero */
+  root.style.setProperty('--y', t.accent !== '#fff' && t.accent !== '#c8c8c8' ? t.accent : '#ffd21f');
+
+  /* ─ Cor de fundo da shell ─ */
+  var shell = document.querySelector('.shell');
+  if(shell) shell.style.background =
+    'linear-gradient(180deg,' + t.primary + '22 0%, rgba(5,5,5,.85) 40%)';
+
+  /* ─ Cor do hero-full overlay ─ */
+  var heroFull = document.querySelector('.hero-full');
+  if(heroFull) heroFull.style.setProperty('--team-overlay', t.primary + '55');
+
+  /* ─ Brasão no hero (adiciona ao lado do logo Pappi) ─ */
+  var existingBadge = document.getElementById('heroBadgeTeam');
+  if(existingBadge) existingBadge.remove();
+  var badge = document.createElement('img');
+  badge.id = 'heroBadgeTeam';
+  badge.src = t.logo;
+  badge.alt = t.nome;
+  badge.style.cssText = 'width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))';
+  var logoDiv = document.querySelector('.hero-logo');
+  if(logoDiv) logoDiv.appendChild(badge);
+
+  /* ─ Textos do hero ─ */
   var h1 = document.querySelector('.hero-h1');
-  if(h1) h1.innerHTML = t.hero.replace('!', '!<br>') + '<br>Torcida <span class="y">Feliz.</span>';
+  if(h1) h1.innerHTML = t.hero.replace('!','!<br>') + '<br>Torcida <span class="y">Feliz.</span>';
   var sub = document.querySelector('.hero-sub');
   if(sub) sub.textContent = '🍕 ' + t.sub;
   var tag = document.querySelector('.hero-tag');
   if(tag) tag.textContent = t.tag + ' · Noite do Jogo';
-  /* Personaliza cor do botão de confirmar nos combos */
-  document.querySelectorAll('.hero-cta-main, .btn-y, .ts-confirm').forEach(function(b){
-    if(t.primary !== '#ffd21f' && t.primary !== '#000'){
-      b.style.background = 'linear-gradient(135deg,' + t.accent + ',' + t.primary + ')';
-      b.style.color = t.secondary;
-    }
+
+  /* ─ Cor dos botões principais ─ */
+  var btnColor = (t.accent !== '#fff' && t.accent !== '#c8c8c8' && t.accent !== '#888' && t.accent !== '#555')
+    ? 'linear-gradient(135deg,' + t.accent + ',' + t.primary + ')'
+    : 'linear-gradient(135deg,#ffe033,#ffd21f,#ffb300)';
+  var btnText = (t.accent !== '#fff' && t.accent !== '#c8c8c8') ? t.secondary : '#111';
+  document.querySelectorAll('.hero-cta-main, .btn-y, .sticky .btn-y').forEach(function(b){
+    b.style.background = btnColor;
+    b.style.color = btnText;
   });
-  /* Rastreia no Pixel */
-  if(typeof fbq !== 'undefined') fbq('trackCustom', 'TeamSelected', {team: id});
+
+  /* ─ Sticky bar: cor de fundo ─ */
+  var sticky = document.querySelector('.sticky');
+  if(sticky) sticky.style.background =
+    'linear-gradient(90deg,' + t.primary + 'ee,' + t.primary + 'cc)';
+
+  /* ─ Hino do time ─ */
+  if(t.hino) playHino(t.hino);
+
+  /* ─ Pixel ─ */
+  if(typeof fbq !== 'undefined') fbq('trackCustom','TeamSelected',{team:id});
 }
 
 /* Verifica se já escolheu na sessão */
