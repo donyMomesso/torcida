@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080808">
-<title>Pappi Pizza | Combos para o Jogo — Campinas</title>
-<meta name="description" content="Pizza quentinha na sua mesa antes do apito final. Escolha o combo certo para a sua torcida e peça agora com entrega rápida em Campinas.">
+<title>Pappi Pizza | Noite do Jogo — Campinas</title>
+<meta name="description" content="Noite de jogo com pizza quentinha na mesa. Escolha o combo certo para a sua torcida e peça agora com entrega rápida em Campinas.">
 <meta property="og:title" content="Pappi Pizza | Combos para o Jogo — Campinas">
 <meta property="og:description" content="Pizza quentinha na sua mesa antes do apito final. Peça agora.">
 <meta property="og:type" content="website">
@@ -20,6 +20,84 @@
   --y:#ffd21f;--g:#15b653;--o:#ff5a1f;--r:#e8192c;
   --line:rgba(255,255,255,.12);--card-bg:rgba(10,10,10,.88);
   --radius-lg:24px;--radius-md:16px;--radius-sm:12px;
+  /* Time personalizado (sobrescrito por JS) */
+  --team-primary:#ffd21f;
+  --team-secondary:#111;
+  --team-accent:#ffd21f;
+}
+
+/* ── Tela de seleção de time ── */
+#teamScreen{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:#050505;
+  padding:24px 20px;
+  overflow-y:auto;
+}
+#teamScreen::before{
+  content:'';
+  position:fixed;inset:0;
+  background:url('/assets/bg-estadio-copa.jpg') center/cover no-repeat;
+  opacity:.18;
+  z-index:0;
+}
+.ts-inner{position:relative;z-index:1;width:100%;max-width:400px;text-align:center}
+.ts-logo{width:80px;margin:0 auto 16px}
+.ts-title{
+  font-size:28px;font-weight:1000;text-transform:uppercase;
+  letter-spacing:-1px;line-height:1;
+  margin-bottom:6px;
+}
+.ts-title span{color:var(--y)}
+.ts-sub{font-size:14px;color:rgba(255,255,255,.65);margin-bottom:24px;line-height:1.4}
+.ts-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:20px;
+}
+.ts-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;
+  border-radius:16px;
+  padding:14px 8px;
+  border:2px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05);
+  cursor:pointer;
+  transition:transform .15s,border-color .15s,background .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.ts-btn:active{transform:scale(.95)}
+.ts-btn.selected{
+  border-color:var(--team-primary,var(--y));
+  background:rgba(255,255,255,.12);
+  transform:scale(1.04);
+}
+.ts-btn-escudo{font-size:32px;line-height:1}
+.ts-btn-name{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.4px;color:rgba(255,255,255,.85)}
+.ts-btn-badge{
+  display:inline-block;
+  font-size:8px;font-weight:900;text-transform:uppercase;
+  border-radius:999px;padding:2px 6px;
+  letter-spacing:.3px;
+}
+.ts-confirm{
+  width:100%;min-height:56px;
+  border-radius:16px;
+  font-size:16px;font-weight:1000;text-transform:uppercase;
+  background:linear-gradient(135deg,#ffe033,var(--y),#ffb300);
+  color:#111;border:0;cursor:pointer;
+  box-shadow:0 8px 28px rgba(255,210,31,.4);
+  animation:btnPulse 2s ease-in-out infinite;
+  display:none;
+}
+.ts-confirm.show{display:block}
+.ts-skip{
+  display:block;margin-top:12px;
+  font-size:12px;color:rgba(255,255,255,.4);
+  cursor:pointer;text-decoration:underline;
+  background:none;border:0;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -328,6 +406,140 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
 </style>
 </head>
 <body>
+<!-- ═══════════════════════════════════════
+     TELA DE SELEÇÃO DE TIME
+═══════════════════════════════════════ -->
+<div id="teamScreen">
+  <div class="ts-inner">
+    <img class="ts-logo" src="/public/logo-pappi.png" alt="Pappi Pizza">
+    <div class="ts-title">Qual é o seu <span>time?</span></div>
+    <p class="ts-sub">A gente personaliza a página só pra você 🍕</p>
+
+    <div class="ts-grid" id="tsGrid">
+      <!-- Times gerados pelo JS -->
+    </div>
+
+    <button class="ts-confirm" id="tsConfirm" onclick="confirmTeam()">Entrar na página →</button>
+    <button class="ts-skip" onclick="skipTeam()">Pular e entrar sem personalizar</button>
+  </div>
+</div>
+
+<script>
+/* ────────────────────────────────────────────────────────────────────────────────
+   TIMES E PERSONALIZAÇÕES
+──────────────────────────────────────────────────────────────────────────────── */
+var TIMES = [
+  {id:'corinthians', nome:'Corinthians', escudo:'⚫️', primary:'#000', secondary:'#fff', accent:'#fff',
+   hero:'Timão na mesa!', sub:'Pizza preta e branca, do jeito que a fiel gosta.', tag:'🔥 Fiel Torcedora'},
+  {id:'palmeiras',   nome:'Palmeiras',   escudo:'🟢', primary:'#006437', secondary:'#fff', accent:'#4CAF50',
+   hero:'Porco pediu pizza!', sub:'Verde que te quero verde. E pizza quentinha.', tag:'🍕 Maior Campeão'},
+  {id:'sao-paulo',   nome:'São Paulo',   escudo:'🔴', primary:'#c0001f', secondary:'#fff', accent:'#e8192c',
+   hero:'Tricolor na mesa!', sub:'Vermelho, preto e branco. E pizza pra todo mundo.', tag:'🍕 SPFC'},
+  {id:'santos',      nome:'Santos',      escudo:'⚪️', primary:'#000', secondary:'#fff', accent:'#ccc',
+   hero:'Peixe pediu pizza!', sub:'A Vila brilha mais com pizza quentinha.', tag:'🍕 Vila Belmiro'},
+  {id:'flamengo',    nome:'Flamengo',    escudo:'🔴', primary:'#c0001f', secondary:'#000', accent:'#e8192c',
+   hero:'Mengão na mesa!', sub:'Nação Rubro-Negra, pizza e muito grito.', tag:'🔥 Nação'},
+  {id:'fluminense',  nome:'Fluminense',  escudo:'🟢', primary:'#8B0000', secondary:'#fff', accent:'#b22222',
+   hero:'Flu pediu pizza!', sub:'Tricolor das Laranjeiras com pizza quentinha.', tag:'🍕 Flu'},
+  {id:'vasco',       nome:'Vasco',       escudo:'⚫️', primary:'#000', secondary:'#fff', accent:'#aaa',
+   hero:'Vasco na mesa!', sub:'Cruz de Malta e pizza pra galera toda.', tag:'🍕 Gigante'},
+  {id:'botafogo',    nome:'Botafogo',    escudo:'⭐', primary:'#000', secondary:'#fff', accent:'#ffd21f',
+   hero:'Estrela Solitária!', sub:'Manequinho pediu pizza. E vai chegar quentinha.', tag:'🍕 Glorioso'},
+  {id:'atletico-mg', nome:'Atlético-MG', escudo:'⚫️', primary:'#000', secondary:'#fff', accent:'#888',
+   hero:'Galo pediu pizza!', sub:'Massa atleticana com pizza quentinha na mesa.', tag:'🔥 Galo'},
+  {id:'cruzeiro',    nome:'Cruzeiro',    escudo:'🔵', primary:'#003087', secondary:'#fff', accent:'#4169e1',
+   hero:'Raposa pediu pizza!', sub:'Azul celeste e pizza pra toda a galera.', tag:'🍕 Raposa'},
+  {id:'gremio',      nome:'Grêmio',      escudo:'🔵', primary:'#003087', secondary:'#fff', accent:'#4169e1',
+   hero:'Tricolor Gaúcho!', sub:'Azul, preto e branco. E pizza antes do apito.', tag:'🍕 Imortal'},
+  {id:'inter',       nome:'Internacional', escudo:'🔴', primary:'#c0001f', secondary:'#fff', accent:'#e8192c',
+   hero:'Colorado pediu pizza!', sub:'Vermelho do Colorado com pizza quentinha.', tag:'🍕 Inter'}
+];
+
+var selectedTeam = null;
+
+/* Renderiza os botões de time */
+(function renderTeams(){
+  var grid = document.getElementById('tsGrid');
+  TIMES.forEach(function(t){
+    var btn = document.createElement('button');
+    btn.className = 'ts-btn';
+    btn.setAttribute('data-id', t.id);
+    btn.innerHTML =
+      '<span class="ts-btn-escudo">' + t.escudo + '</span>' +
+      '<span class="ts-btn-name">' + t.nome + '</span>';
+    btn.onclick = function(){ selectTeam(t.id); };
+    grid.appendChild(btn);
+  });
+})();
+
+function selectTeam(id){
+  selectedTeam = id;
+  /* Destaca o botão selecionado */
+  document.querySelectorAll('.ts-btn').forEach(function(b){
+    b.classList.toggle('selected', b.getAttribute('data-id') === id);
+  });
+  /* Mostra botão de confirmar */
+  document.getElementById('tsConfirm').classList.add('show');
+  /* Preview da cor primária no botão */
+  var t = TIMES.find(function(x){ return x.id === id; });
+  if(t) document.getElementById('tsConfirm').textContent = 'Entrar como torcedor do ' + t.nome + ' →';
+}
+
+function confirmTeam(){
+  if(!selectedTeam) return;
+  applyTeam(selectedTeam);
+  closeTeamScreen();
+}
+
+function skipTeam(){
+  closeTeamScreen();
+}
+
+function closeTeamScreen(){
+  var screen = document.getElementById('teamScreen');
+  screen.style.transition = 'opacity .4s';
+  screen.style.opacity = '0';
+  setTimeout(function(){ screen.style.display = 'none'; }, 400);
+  /* Salva escolha para não perguntar de novo na sessão */
+  sessionStorage.setItem('pappi_team', selectedTeam || 'none');
+}
+
+function applyTeam(id){
+  var t = TIMES.find(function(x){ return x.id === id; });
+  if(!t) return;
+  /* Aplica variáveis CSS */
+  var root = document.documentElement;
+  root.style.setProperty('--team-primary', t.primary);
+  root.style.setProperty('--team-secondary', t.secondary);
+  root.style.setProperty('--team-accent', t.accent);
+  /* Personaliza textos do hero */
+  var h1 = document.querySelector('.hero-h1');
+  if(h1) h1.innerHTML = t.hero.replace('!', '!<br>') + '<br>Torcida <span class="y">Feliz.</span>';
+  var sub = document.querySelector('.hero-sub');
+  if(sub) sub.textContent = '🍕 ' + t.sub;
+  var tag = document.querySelector('.hero-tag');
+  if(tag) tag.textContent = t.tag + ' · Noite do Jogo';
+  /* Personaliza cor do botão de confirmar nos combos */
+  document.querySelectorAll('.hero-cta-main, .btn-y, .ts-confirm').forEach(function(b){
+    if(t.primary !== '#ffd21f' && t.primary !== '#000'){
+      b.style.background = 'linear-gradient(135deg,' + t.accent + ',' + t.primary + ')';
+      b.style.color = t.secondary;
+    }
+  });
+  /* Rastreia no Pixel */
+  if(typeof fbq !== 'undefined') fbq('trackCustom', 'TeamSelected', {team: id});
+}
+
+/* Verifica se já escolheu na sessão */
+(function checkSession(){
+  var saved = sessionStorage.getItem('pappi_team');
+  if(saved){
+    if(saved !== 'none') applyTeam(saved);
+    document.getElementById('teamScreen').style.display = 'none';
+  }
+})();
+</script>
+
 <div class="shell">
 
   <!-- ═══════════════════════════════════════
@@ -353,11 +565,11 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
     <div class="hero-content">
 
       <!-- Tag de destaque -->
-      <div class="hero-tag">🔥 Dia de Jogo · Combos Especiais</div>
+      <div class="hero-tag">🔥 Noite do Jogo · Combos Especiais</div>
 
       <!-- Título enorme -->
-      <div class="hero-h1">Pizza<br>Quente.<br>Torcida <span class="y">Feliz.</span></div>
-      <div class="hero-sub">🍕 Na mesa antes do apito final</div>
+      <div class="hero-h1">Noite<br>de Jogo.<br>Torcida <span class="y">Feliz.</span></div>
+      <div class="hero-sub">🍕 Pizza quentinha antes do apito final</div>
 
       <!-- Status de abertura -->
       <div class="hero-status open" id="heroStatusOpen" style="display:none">
@@ -434,8 +646,8 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
     <!-- Combos -->
     <section class="section" id="combos">
       <div class="card copy">
-        <h2 class="sec-title">3 Combos. Escolha o seu.</h2>
-        <p class="lead">Clique no combo certo para o tamanho da sua torcida e já vai direto para o pedido.</p>
+        <h2 class="sec-title">🍕 3 Combos. Escolha o seu.</h2>
+        <p class="lead">Quanto maior a torcida, maior o combo. Clique e já vai direto pro pedido.</p>
 
         <!-- Combo 1: Combo Gigante -->
         <article class="combo">
