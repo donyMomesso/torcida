@@ -94,6 +94,56 @@
   display:none;
 }
 .ts-confirm.show{display:block}
+/* ── Formulário de captura WhatsApp ── */
+.ts-capture{
+  margin-top:16px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;
+  padding:16px;
+  text-align:left;
+  display:none;
+}
+.ts-capture.show{display:block}
+.ts-capture-title{
+  font-size:13px;font-weight:900;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--y);margin-bottom:4px;
+}
+.ts-capture-sub{
+  font-size:12px;color:rgba(255,255,255,.55);margin-bottom:12px;line-height:1.4;
+}
+.ts-capture-row{
+  display:flex;gap:8px;
+}
+.ts-capture-input{
+  flex:1;min-height:44px;
+  background:rgba(255,255,255,.08);
+  border:1.5px solid rgba(255,255,255,.18);
+  border-radius:12px;
+  color:#fff;font-size:15px;font-weight:700;
+  padding:0 12px;
+  outline:none;
+  -webkit-appearance:none;
+}
+.ts-capture-input::placeholder{color:rgba(255,255,255,.35);font-weight:400}
+.ts-capture-input:focus{border-color:var(--y)}
+.ts-capture-btn{
+  min-height:44px;padding:0 16px;
+  background:linear-gradient(135deg,#25d366,#1da851);
+  color:#fff;border:0;border-radius:12px;
+  font-size:13px;font-weight:900;text-transform:uppercase;
+  cursor:pointer;white-space:nowrap;
+}
+.ts-capture-ok{
+  font-size:12px;color:#25d366;font-weight:700;
+  text-align:center;margin-top:8px;display:none;
+}
+.ts-capture-skip{
+  display:block;text-align:center;margin-top:8px;
+  font-size:11px;color:rgba(255,255,255,.3);
+  cursor:pointer;text-decoration:underline;
+}
+
 .ts-skip{
   display:block;margin-top:12px;
   font-size:12px;color:rgba(255,255,255,.4);
@@ -421,6 +471,19 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
     </div>
 
     <button class="ts-confirm" id="tsConfirm" onclick="confirmTeam()">Entrar na página →</button>
+
+    <!-- Captura de WhatsApp -->
+    <div class="ts-capture" id="tsCapture">
+      <div class="ts-capture-title">📲 Quer saber quando seu time jogar?</div>
+      <p class="ts-capture-sub">Deixa seu WhatsApp e a gente te avisa com o combo especial do jogo!</p>
+      <div class="ts-capture-row">
+        <input class="ts-capture-input" id="tsWhatsapp" type="tel" placeholder="(19) 99999-9999" maxlength="15" inputmode="numeric">
+        <button class="ts-capture-btn" onclick="saveWhatsapp()">Salvar</button>
+      </div>
+      <div class="ts-capture-ok" id="tsCaptureOk">✅ Salvo! Você vai receber avisos dos jogos.</div>
+      <button class="ts-capture-skip" onclick="skipCapture()">Agora não</button>
+    </div>
+
     <button class="ts-skip" onclick="skipTeam()">Pular e entrar sem personalizar</button>
   </div>
 </div>
@@ -547,6 +610,68 @@ function selectTeam(id){
 function confirmTeam(){
   if(!selectedTeam) return;
   applyTeam(selectedTeam);
+  /* Salva no localStorage para reconhecer cliente recorrente */
+  localStorage.setItem('pappi_team', selectedTeam);
+  /* Verifica se já capturou WhatsApp antes */
+  var savedWa = localStorage.getItem('pappi_wa');
+  if(savedWa){
+    /* Já tem WhatsApp salvo — entra direto */
+    closeTeamScreen();
+  } else {
+    /* Mostra formulário de captura */
+    document.getElementById('tsConfirm').style.display = 'none';
+    document.getElementById('tsCapture').classList.add('show');
+    document.getElementById('tsWhatsapp').focus();
+    /* Formata o campo enquanto digita */
+    document.getElementById('tsWhatsapp').addEventListener('input', formatPhone);
+  }
+}
+
+function formatPhone(){
+  var inp = document.getElementById('tsWhatsapp');
+  var v = inp.value.replace(/\D/g,'');
+  if(v.length <= 2) v = v;
+  else if(v.length <= 7) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+  else if(v.length <= 11) v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+  else v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7,11);
+  inp.value = v;
+}
+
+function saveWhatsapp(){
+  var raw = document.getElementById('tsWhatsapp').value.replace(/\D/g,'');
+  if(raw.length < 10){
+    document.getElementById('tsWhatsapp').style.borderColor = '#e8192c';
+    document.getElementById('tsWhatsapp').placeholder = 'Número inválido!';
+    return;
+  }
+  /* Salva no localStorage */
+  localStorage.setItem('pappi_wa', raw);
+  localStorage.setItem('pappi_team', selectedTeam || 'none');
+  /* Envia para a API */
+  var t = TIMES.find(function(x){ return x.id === selectedTeam; });
+  fetch('/api/leads', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      whatsapp: raw,
+      time: selectedTeam,
+      time_nome: t ? t.nome : selectedTeam,
+      data: new Date().toISOString()
+    })
+  }).catch(function(){}); /* Silencia erros de rede */
+  /* Feedback visual */
+  document.getElementById('tsCaptureOk').style.display = 'block';
+  document.getElementById('tsCapture').querySelector('.ts-capture-row').style.display = 'none';
+  document.getElementById('tsCapture').querySelector('.ts-capture-skip').style.display = 'none';
+  /* Entra na página após 1.5s */
+  setTimeout(closeTeamScreen, 1500);
+  /* Pixel */
+  if(typeof fbq !== 'undefined') fbq('trackCustom','LeadCaptured',{team:selectedTeam,phone:raw});
+}
+
+function skipCapture(){
+  /* Marca que já perguntou para não perguntar de novo */
+  localStorage.setItem('pappi_wa_skip', '1');
   closeTeamScreen();
 }
 
@@ -637,9 +762,9 @@ function applyTeam(id){
   if(typeof fbq !== 'undefined') fbq('trackCustom','TeamSelected',{team:id});
 }
 
-/* Verifica se já escolheu na sessão */
+/* Verifica se já escolheu (localStorage = persiste entre visitas) */
 (function checkSession(){
-  var saved = sessionStorage.getItem('pappi_team');
+  var saved = localStorage.getItem('pappi_team');
   if(saved){
     if(saved !== 'none') applyTeam(saved);
     document.getElementById('teamScreen').style.display = 'none';
