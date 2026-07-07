@@ -300,7 +300,7 @@ img{display:block;max-width:100%}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
 /* ── Top bar ── */
-.top{background:linear-gradient(90deg,#078a39,#14bc52,#078a39);text-align:center;padding:9px 14px;font-size:11px;font-weight:1000;text-transform:uppercase;letter-spacing:.5px}
+.top{background:linear-gradient(90deg,var(--team-primary,#078a39),var(--team-accent,#14bc52),var(--team-primary,#078a39));text-align:center;padding:9px 14px;font-size:11px;font-weight:1000;text-transform:uppercase;letter-spacing:.5px;transition:background .4s}
 
 /* ── Header ── */
 .head{position:sticky;top:0;z-index:20;background:rgba(8,8,8,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:10px 14px}
@@ -365,7 +365,7 @@ img{display:block;max-width:100%}
 .section{padding:12px 12px 0}
 .card{border:1px solid var(--line);background:var(--card-bg);border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.4);backdrop-filter:blur(14px)}
 .copy{padding:18px}
-.kicker{display:inline-block;border:1px solid rgba(255,210,31,.36);background:rgba(255,210,31,.14);color:var(--y);border-radius:999px;padding:7px 10px;font-size:10px;font-weight:1000;text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px}
+.kicker{display:inline-block;border:1px solid rgba(255,210,31,.36);background:rgba(255,210,31,.14);color:var(--y);border-radius:999px;padding:7px 10px;font-size:10px;font-weight:1000;text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px;transition:all .4s}
 
 /* ── Hero ── */
 h1{font-size:38px;line-height:.94;font-weight:1000;letter-spacing:-1.3px;text-transform:uppercase}
@@ -416,12 +416,12 @@ h1 .y{color:var(--y)}
 .combo .body{padding:15px}
 .badge{display:inline-block;width:max-content;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:1000;text-transform:uppercase;margin-bottom:9px}
 .b1{color:var(--y);background:rgba(255,210,31,.14);border:1px solid rgba(255,210,31,.35)}
-.b2{color:#9df2bb;background:rgba(17,182,79,.14);border:1px solid rgba(17,182,79,.35)}
-.b3{color:#ffbc9f;background:rgba(255,90,31,.14);border:1px solid rgba(255,90,31,.35)}
+.b2{color:#9df2bb;background:rgba(17,182,79,.14);border:1px solid rgba(17,182,79,.35);transition:all .4s}
+.b3{color:#ffbc9f;background:rgba(255,90,31,.14);border:1px solid rgba(255,90,31,.35);transition:all .4s}
 .combo h3{font-size:21px;line-height:1.07}
 .price2{font-size:38px;margin:8px 0}
 .hook{font-size:14px;font-weight:1000;color:#fff;margin-bottom:8px}
-.combo-savings{display:inline-block;background:rgba(21,182,83,.15);border:1px solid rgba(21,182,83,.3);color:#9df2bb;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900;margin-bottom:8px}
+.combo-savings{display:inline-block;background:rgba(21,182,83,.15);border:1px solid rgba(21,182,83,.3);color:#9df2bb;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900;margin-bottom:8px;transition:all .4s}
 .combo .btn{margin-top:12px}
 
 /* ── Itens do combo (lista visual) ── */
@@ -470,18 +470,16 @@ footer{text-align:center;color:#97a59e;font-size:12px;padding:18px 0 108px}
       <!-- Times gerados pelo JS -->
     </div>
 
-    <button class="ts-confirm" id="tsConfirm" onclick="confirmTeam()">Entrar na página →</button>
-
-    <!-- Captura de WhatsApp -->
+    <!-- Captura de WhatsApp (aparece ao clicar no time) -->
     <div class="ts-capture" id="tsCapture">
-      <div class="ts-capture-title">📲 Quer saber quando seu time jogar?</div>
+      <div class="ts-capture-title" id="tsCaptureTitle">📲 Quer saber quando seu time jogar?</div>
       <p class="ts-capture-sub">Deixa seu WhatsApp e a gente te avisa com o combo especial do jogo!</p>
       <div class="ts-capture-row">
         <input class="ts-capture-input" id="tsWhatsapp" type="tel" placeholder="(19) 99999-9999" maxlength="15" inputmode="numeric">
         <button class="ts-capture-btn" onclick="saveWhatsapp()">Salvar</button>
       </div>
-      <div class="ts-capture-ok" id="tsCaptureOk">✅ Salvo! Você vai receber avisos dos jogos.</div>
-      <button class="ts-capture-skip" onclick="skipCapture()">Agora não</button>
+      <div class="ts-capture-ok" id="tsCaptureOk">✅ Salvo! Entrando...</div>
+      <button class="ts-capture-skip" onclick="skipCapture()">Agora não, entrar direto</button>
     </div>
 
     <button class="ts-skip" onclick="skipTeam()">Pular e entrar sem personalizar</button>
@@ -593,36 +591,34 @@ var hinoFrame = null;
 
 function selectTeam(id){
   selectedTeam = id;
+
+  /* Destaca o botão clicado */
   document.querySelectorAll('.ts-btn').forEach(function(b){
     b.classList.toggle('selected', b.getAttribute('data-id') === id);
   });
-  document.getElementById('tsConfirm').classList.add('show');
-  var t = TIMES.find(function(x){ return x.id === id; });
-  if(t){
-    document.getElementById('tsConfirm').textContent = 'Entrar como torcedor do ' + t.nome + ' →';
-    /* Aplica cor de preview no botão de confirmar */
-    document.getElementById('tsConfirm').style.background =
-      'linear-gradient(135deg,' + t.accent + ',' + t.primary + ')';
-    document.getElementById('tsConfirm').style.color = t.secondary;
-  }
-}
 
-function confirmTeam(){
-  if(!selectedTeam) return;
-  applyTeam(selectedTeam);
-  /* Salva no localStorage para reconhecer cliente recorrente */
-  localStorage.setItem('pappi_team', selectedTeam);
-  /* Verifica se já capturou WhatsApp antes */
+  /* Aplica o time imediatamente */
+  applyTeam(id);
+  localStorage.setItem('pappi_team', id);
+
+  var t = TIMES.find(function(x){ return x.id === id; });
+
+  /* Verifica se já tem WhatsApp salvo */
   var savedWa = localStorage.getItem('pappi_wa');
-  if(savedWa){
-    /* Já tem WhatsApp salvo — entra direto */
-    closeTeamScreen();
+  var skipped  = localStorage.getItem('pappi_wa_skip');
+
+  if(savedWa || skipped){
+    /* Já conhecemos o cliente — entra direto com animação */
+    setTimeout(closeTeamScreen, 300);
   } else {
-    /* Mostra formulário de captura */
-    document.getElementById('tsConfirm').style.display = 'none';
-    document.getElementById('tsCapture').classList.add('show');
+    /* Mostra formulário de captura de WhatsApp */
+    var cap = document.getElementById('tsCapture');
+    var title = document.getElementById('tsCaptureTitle');
+    if(t) title.textContent = '📲 ' + t.nome + ' joga hoje! Quer ser avisado?';
+    cap.classList.add('show');
+    /* Scroll suave até o formulário */
+    setTimeout(function(){ cap.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
     document.getElementById('tsWhatsapp').focus();
-    /* Formata o campo enquanto digita */
     document.getElementById('tsWhatsapp').addEventListener('input', formatPhone);
   }
 }
@@ -754,6 +750,51 @@ function applyTeam(id){
   var sticky = document.querySelector('.sticky');
   if(sticky) sticky.style.background =
     'linear-gradient(90deg,' + t.primary + 'ee,' + t.primary + 'cc)';
+
+  /* ─ Urgency bar: cor do time ─ */
+  var urgBar = document.querySelector('.urgency-bar');
+  if(urgBar) urgBar.style.background =
+    'linear-gradient(90deg,' + t.primary + ',' + t.secondary + '22,' + t.primary + ')';
+
+  /* ─ Top bar: já usa var(--team-primary) via CSS, mas força repaint ─ */
+  var topBar = document.querySelector('.top');
+  if(topBar){
+    topBar.style.background =
+      'linear-gradient(90deg,' + t.primary + ',' + t.accent + ',' + t.primary + ')';
+  }
+
+  /* ─ Badges dos combos ─ */
+  var badges = document.querySelectorAll('.badge');
+  badges.forEach(function(b){
+    b.style.color = t.accent !== '#fff' ? t.accent : '#ffd21f';
+    b.style.background = t.primary + '22';
+    b.style.borderColor = t.primary + '88';
+  });
+
+  /* ─ combo-savings ─ */
+  document.querySelectorAll('.combo-savings').forEach(function(el){
+    el.style.background = t.primary + '22';
+    el.style.borderColor = t.primary + '66';
+    el.style.color = t.accent !== '#fff' ? t.accent : '#9df2bb';
+  });
+
+  /* ─ Kicker / sec-title / emotion ─ */
+  document.querySelectorAll('.kicker,.emotion,.sec-title .y').forEach(function(el){
+    el.style.color = t.accent !== '#fff' ? t.accent : '#ffd21f';
+  });
+
+  /* ─ price2 e stars ─ */
+  document.querySelectorAll('.price2,.stars,.price').forEach(function(el){
+    el.style.color = t.accent !== '#fff' ? t.accent : '#ffd21f';
+  });
+
+  /* ─ hero-tag: cor de borda e fundo ─ */
+  var heroTag = document.querySelector('.hero-tag');
+  if(heroTag){
+    heroTag.style.background = t.primary + '33';
+    heroTag.style.borderColor = t.primary + '88';
+    heroTag.style.color = t.accent !== '#fff' ? t.accent : '#ffd21f';
+  }
 
   /* ─ Hino do time ─ */
   if(t.hino) playHino(t.hino);
