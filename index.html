@@ -520,24 +520,24 @@ var CDN = 'https://assets.football-logos.cc/logos/brazil/256x256/';
 var TIMES = [
   /* ─ São Paulo ─ */
   {id:'corinthians', nome:'Corinthians',
-   logo: CDN+'corinthians.c51ae739.png',
+   logo: '/public/Logo_time/Corinthians.jpg',
    primary:'#1a1a1a', secondary:'#fff', accent:'#fff', textDark:false,
-   hino:'https://www.youtube.com/embed/O7rMDHKJSp8?autoplay=1&loop=1&playlist=O7rMDHKJSp8',
+   hino:'/public/hino_time/HINO DO CORINTHIANS - OFICIAL - Torcida Fiel do Corinthians (youtube).mp3',
    hero:'Timão na mesa!', sub:'Pizza preta e branca, do jeito que a Fiel gosta.', tag:'🔥 Fiel Torcedora'},
   {id:'palmeiras', nome:'Palmeiras',
-   logo: CDN+'palmeiras.9ab1d558.png',
+   logo: '/public/Logo_time/Palmeiras.jpg',
    primary:'#006437', secondary:'#fff', accent:'#4CAF50', textDark:false,
-   hino:'https://www.youtube.com/embed/4Ks7eSBiRkk?autoplay=1&loop=1&playlist=4Ks7eSBiRkk',
+   hino:'/public/hino_time/Hino Do Palmeiras - WILLIAM MARQUES YTB (youtube).mp3',
    hero:'Porco pediu pizza!', sub:'Verde que te quero verde. E pizza quentinha.', tag:'🍕 Maior Campeão'},
   {id:'sao-paulo', nome:'São Paulo',
-   logo: CDN+'sao-paulo.468eaeb3.png',
+   logo: '/public/Logo_time/são Paulo.jpg',
    primary:'#c0001f', secondary:'#fff', accent:'#e8192c', textDark:false,
-   hino:'https://www.youtube.com/embed/6J3GxTfLPkI?autoplay=1&loop=1&playlist=6J3GxTfLPkI',
+   hino:'/public/hino_time/Hino do São Paulo FC - João futebol clube (youtube).mp3',
    hero:'Tricolor na mesa!', sub:'Vermelho, preto e branco. E pizza pra todo mundo.', tag:'🍕 SPFC'},
   {id:'santos', nome:'Santos',
-   logo: CDN+'santos.5ea20e58.png',
+   logo: '/public/Logo_time/Santos.jpg',
    primary:'#1a1a1a', secondary:'#fff', accent:'#c8c8c8', textDark:false,
-   hino:'https://www.youtube.com/embed/8sBnIqXJjcE?autoplay=1&loop=1&playlist=8sBnIqXJjcE',
+   hino:'/public/hino_time/Hino do Santos  -  Santos FC ( Glorioso alvinegro praiano) legenda - Bispo Music (youtube).mp3',
    hero:'Peixe pediu pizza!', sub:'A Vila brilha mais com pizza quentinha.', tag:'🍕 Vila Belmiro'},
   /* ─ Rio de Janeiro ─ */
   {id:'flamengo', nome:'Flamengo',
@@ -709,16 +709,39 @@ function closeTeamScreen(){
 }
 
 function stopHino(){
-  if(hinoFrame){ hinoFrame.remove(); hinoFrame = null; }
+  if(hinoFrame){
+    if(hinoFrame.tagName === 'AUDIO'){
+      hinoFrame.pause();
+      hinoFrame.src = '';
+    } else {
+      hinoFrame.remove();
+    }
+    hinoFrame = null;
+  }
 }
 
 function playHino(url){
   stopHino();
-  hinoFrame = document.createElement('iframe');
-  hinoFrame.src = url;
-  hinoFrame.allow = 'autoplay';
-  hinoFrame.style.cssText = 'display:none;width:0;height:0;border:0;position:absolute';
-  document.body.appendChild(hinoFrame);
+  /* MP3 local: usa elemento <audio> */
+  if(url.match(/\.mp3$/i)){
+    hinoFrame = new Audio(url);
+    hinoFrame.loop = true;
+    hinoFrame.volume = 0.55;
+    hinoFrame.play().catch(function(){
+      /* Autoplay bloqueado: toca no primeiro gesto */
+      document.addEventListener('click', function once(){
+        hinoFrame && hinoFrame.play();
+        document.removeEventListener('click', once);
+      });
+    });
+  } else {
+    /* YouTube embed */
+    hinoFrame = document.createElement('iframe');
+    hinoFrame.src = url;
+    hinoFrame.allow = 'autoplay';
+    hinoFrame.style.cssText = 'display:none;width:0;height:0;border:0;position:absolute';
+    document.body.appendChild(hinoFrame);
+  }
 }
 
 function applyTeam(id){
