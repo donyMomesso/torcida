@@ -2,13 +2,22 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "torcida",
   "compatibility_date": "2026-06-30",
+  "main": "worker.js",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS"
   },
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "LEADS_KV",
+      "id": "SUBSTITUA_PELO_ID_DO_KV",
+      "preview_id": "SUBSTITUA_PELO_ID_DO_KV_PREVIEW"
+    }
   ]
 }
